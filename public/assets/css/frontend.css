@@ -1,0 +1,7 @@
+/**
+ * Legacy bundle — prefer common.css + home.css + pages.css
+ * Kept so old links still work.
+ */
+@import url('common.css');
+@import url('home.css');
+@import url('pages.css');

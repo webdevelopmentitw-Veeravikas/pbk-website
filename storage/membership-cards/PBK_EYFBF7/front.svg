@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2024" height="1274" viewBox="0 0 2024 1274" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="cardFrontBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#071c55"/>
+      <stop offset="55%" stop-color="#0b2f7a"/>
+      <stop offset="100%" stop-color="#113f9b"/>
+    </linearGradient>
+  </defs>
+  <rect width="2024" height="1274" fill="url(#cardFrontBg)"/>
+  <rect x="28" y="28" width="1968" height="1218" rx="46" fill="none" stroke="#ffffff" stroke-opacity="0.95" stroke-width="6"/>
+  <circle cx="300" cy="260" r="220" fill="#5ec8ff" opacity="0.16"/>
+  <circle cx="1740" cy="250" r="220" fill="#ffffff" opacity="0.10"/>
+  <path d="M220 1000 C470 840, 1560 840, 1800 1012" fill="none" stroke="#5ec8ff" stroke-width="18" stroke-linecap="round" opacity="0.75"/>
+  <rect x="120" y="128" width="780" height="1020" rx="36" fill="#ffffff" opacity="0.10"/>
+  <rect x="154" y="162" width="712" height="952" rx="30" fill="#0b2f7a" stroke="#ffffff" stroke-opacity="0.16" stroke-width="6"/>
+  <circle cx="510" cy="430" r="190" fill="none" stroke="#ffffff" stroke-width="16" opacity="0.95"/>
+  <circle cx="510" cy="430" r="138" fill="none" stroke="#5ec8ff" stroke-width="14"/>
+  <circle cx="510" cy="430" r="92" fill="#5ec8ff" opacity="0.24"/>
+  <path d="M510 312 L620 530 L400 530 Z" fill="#ffffff" opacity="0.98"/>
+  <text x="510" y="300" text-anchor="middle" fill="#ffffff" font-family="Mukta Malar, Noto Sans Tamil, Arial, sans-serif" font-size="58" font-weight="800">புரட்சி பாரதம்</text>
+  <text x="510" y="360" text-anchor="middle" fill="#ffffff" font-family="Mukta Malar, Noto Sans Tamil, Arial, sans-serif" font-size="28" font-weight="600">உறுப்பினர் அட்டை</text>
+  <text x="510" y="548" text-anchor="middle" fill="#ffffff" font-family="Mukta Malar, Noto Sans Tamil, Arial, sans-serif" font-size="34" font-weight="700">சமூக சேவைக்கான</text>
+  <text x="510" y="592" text-anchor="middle" fill="#ffffff" font-family="Mukta Malar, Noto Sans Tamil, Arial, sans-serif" font-size="34" font-weight="700">நம்பிக்கையின் அடையாளம்</text>
+  <rect x="1056" y="280" width="780" height="168" rx="24" fill="#ffffff" opacity="0.14"/>
+  <text x="1446" y="352" text-anchor="middle" fill="#ffffff" font-family="Mukta Malar, Noto Sans Tamil, Arial, sans-serif" font-size="54" font-weight="800">கல்வி மற்றும்</text>
+  <text x="1446" y="416" text-anchor="middle" fill="#ffffff" font-family="Mukta Malar, Noto Sans Tamil, Arial, sans-serif" font-size="54" font-weight="800">சமூக முன்னேற்றம்</text>
+  <rect x="1056" y="492" width="780" height="360" rx="30" fill="#ffffff" opacity="0.12"/>
+  <text x="1446" y="590" text-anchor="middle" fill="#ffffff" font-family="Mukta Malar, Noto Sans Tamil, Arial, sans-serif" font-size="42" font-weight="700">உறுப்பினர் பதிவு அட்டை</text>
+  <text x="1446" y="660" text-anchor="middle" fill="#ffffff" font-family="Mukta Malar, Noto Sans Tamil, Arial, sans-serif" font-size="32" font-weight="600">சுருக்கமான, தெளிவான, அச்சிடக்கூடிய வடிவமைப்பு</text>
+  <text x="1446" y="728" text-anchor="middle" fill="#5ec8ff" font-family="Mukta Malar, Noto Sans Tamil, Arial, sans-serif" font-size="30" font-weight="700">அறிவும் ஒழுக்கமும்</text>
+  <text x="1446" y="780" text-anchor="middle" fill="#ffffff" font-family="Mukta Malar, Noto Sans Tamil, Arial, sans-serif" font-size="28" font-weight="600">சமூக மாற்றத்திற்கு வழிகாட்டும்</text>
+</svg>

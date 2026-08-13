@@ -1,0 +1,132 @@
+/**
+ * HOME PAGE CSS — VoteForDMK-inspired
+ * Body font/bg set in common.css
+ */
+
+.page-home main {
+  padding-top: 8px;
+}
+
+/* Full-width banner with soft inset feel */
+.hero.hero-banner {
+  position: relative;
+  overflow: visible;
+  background: transparent;
+  border: none;
+  padding: 8px 0 12px;
+  margin: 0;
+}
+
+.hero-banner .hero-slider {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.hero-banner .hero-slide {
+  display: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 14px 36px rgba(120, 30, 40, 0.12);
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+.hero-banner .hero-slide.active {
+  display: block;
+}
+
+.hero-banner-link {
+  display: block;
+  width: 100%;
+  line-height: 0;
+}
+
+.hero-banner-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 62vh;
+  min-height: 240px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
+}
+
+.hero-banner .slider-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  z-index: 2;
+  margin: 0;
+  pointer-events: none;
+}
+
+.hero-banner .slider-dot {
+  pointer-events: auto;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: rgba(255, 255, 255, 0.4);
+  padding: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-banner .slider-dot.active {
+  background: var(--red);
+  border-color: #fff;
+}
+
+.media-teaser-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.teaser-title {
+  font-size: 18px;
+  color: var(--navy);
+  margin: 0 0 16px;
+  font-weight: 800;
+}
+
+/* Soft event cards on home */
+.page-home .event-card,
+.page-home .gallery-card,
+.page-home .video-card .video-thumb {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  background: #fff;
+}
+
+@media (max-width: 980px) {
+  .hero-banner-img {
+    max-height: 46vh;
+    min-height: 180px;
+  }
+  .hero-banner .hero-slide {
+    border-radius: 16px;
+  }
+  .media-teaser-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-banner-img {
+    max-height: 34vh;
+    min-height: 160px;
+  }
+}

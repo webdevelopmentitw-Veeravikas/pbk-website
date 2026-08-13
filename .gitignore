@@ -1,0 +1,14 @@
+/vendor/
+/composer.phar
+/storage/logs/*
+/storage/cache/*
+/storage/backups/*
+/storage/sessions/*
+/public/uploads/**/*
+!/public/uploads/.htaccess
+!/public/uploads/**/.gitkeep
+.env
+.idea/
+.vscode/
+*.log
+Thumbs.db

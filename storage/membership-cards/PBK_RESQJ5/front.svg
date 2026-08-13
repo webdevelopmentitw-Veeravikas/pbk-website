@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Membership CARD FRONT template.
+  Placeholders (replaced on registration):
+    {{PHOTO_HREF}}   member photo data-URI
+    {{QR_HREF}}      QR code data-URI
+    {{NAME}}         member name
+    {{MEMBER_ID}}    PBK_XXXXXX
+  Replace this file with your own artwork SVG using the same placeholders.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="856" height="540" viewBox="0 0 856 540">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#071a4d"/>
+      <stop offset="100%" stop-color="#123a8a"/>
+    </linearGradient>
+    <clipPath id="photoClip"><rect x="560" y="110" width="240" height="310" rx="8"/></clipPath>
+  </defs>
+  <rect width="856" height="540" rx="24" fill="url(#bg)"/>
+  <text x="428" y="58" text-anchor="middle" fill="#fff" font-size="28" font-family="Mukta Malar, Noto Sans Tamil, Arial, sans-serif" font-weight="800">šÁ¤¨Í¤¿°®Í! š®¤Í¤Áµ®Í! š•Ë¤°¤Í¤Áµ®Í!</text>
+
+  <!-- Member photo -->
+  <image x="560" y="110" width="240" height="310" preserveAspectRatio="xMidYMin slice" clip-path="url(#photoClip)" href="{{PHOTO_HREF}}" xlink:href="{{PHOTO_HREF}}"/>
+  <rect x="560" y="380" width="240" height="40" fill="rgba(0,0,0,0.55)"/>
+  <text x="680" y="398" text-anchor="middle" fill="#fff" font-size="16" font-family="Mukta Malar, Noto Sans Tamil, Arial, sans-serif" font-weight="700">{{NAME}}</text>
+  <text x="680" y="416" text-anchor="middle" fill="#ffe082" font-size="14" font-family="Mukta Malar, Arial, sans-serif" font-weight="800">{{MEMBER_ID}}</text>
+
+  <!-- QR -->
+  <rect x="36" y="400" width="100" height="100" fill="#fff" rx="6"/>
+  <image x="42" y="406" width="88" height="88" href="{{QR_HREF}}" xlink:href="{{QR_HREF}}"/>
+  <text x="150" y="430" fill="#fff" font-size="14" font-family="Mukta Malar, Arial, sans-serif" font-weight="700">Head office:</text>
+  <text x="150" y="452" fill="#fff" font-size="13" font-family="Mukta Malar, Arial, sans-serif">MG Nagar, Poonamallee, Chennai,</text>
+  <text x="150" y="472" fill="#fff" font-size="13" font-family="Mukta Malar, Arial, sans-serif">Poonamallee, Tamil Nadu 600056.</text>
+</svg>
