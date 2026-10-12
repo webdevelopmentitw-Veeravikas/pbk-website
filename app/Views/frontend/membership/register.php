@@ -59,12 +59,18 @@ $siteName = $settings['site_name'] ?? setting('site_name', 'CMS');
           <option value="">தேர்வு செய்க</option>
           <option value="ஆண்">ஆண்</option>
           <option value="பெண்">பெண்</option>
-          <option value="மற்றவை">மற்றவை</option>
+          <option value="மூன்றாம்பாலினம்">மூன்றாம் பாலினம்</option>
         </select>
       </div>
       <div class="field">
         <label>பிறந்த தேதி *</label>
-        <input type="date" name="dob" required>
+        <?php
+          $maxDob = (new DateTimeImmutable('today'))->modify('-18 years')->format('Y-m-d');
+          $minDob = (new DateTimeImmutable('today'))->modify('-120 years')->format('Y-m-d');
+        ?>
+        <input type="date" name="dob" id="dobInput" required min="<?= e($minDob) ?>" max="<?= e($maxDob) ?>">
+        <p class="field-hint">18 வயது நிறைவடைந்தவர்கள் மட்டுமே உறுப்பினராகப் பதிவு செய்யலாம்.</p>
+        <p class="field-error" id="dobError" hidden></p>
       </div>
     </div>
 

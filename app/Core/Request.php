@@ -42,11 +42,22 @@ final class Request
     public function uri(): string
     {
         $uri = parse_url($this->server['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
-        $base = rtrim(BASE_PATH, '/');
-        if ($base !== '' && str_starts_with($uri, $base)) {
-            $uri = substr($uri, strlen($base)) ?: '/';
+        $uri = '/' . trim(str_replace('\\', '/', $uri), '/');
+        if ($uri !== '/') {
+            $uri = rtrim($uri, '/') ?: '/';
         }
-        return '/' . trim($uri, '/');
+
+        $base = defined('BASE_PATH') ? rtrim((string) BASE_PATH, '/') : '';
+        // Require a path boundary so "/p" does not match "/page/..." or "/post/...".
+        if ($base !== '' && ($uri === $base || str_starts_with($uri, $base . '/'))) {
+            $uri = substr($uri, strlen($base)) ?: '/';
+            $uri = '/' . trim($uri, '/');
+            if ($uri !== '/') {
+                $uri = rtrim($uri, '/') ?: '/';
+            }
+        }
+
+        return $uri === '' ? '/' : $uri;
     }
 
     public function path(): string

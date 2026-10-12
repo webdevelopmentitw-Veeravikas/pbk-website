@@ -2,12 +2,18 @@
 use App\Core\View;
 
 $postUrl = url('/post/' . ($post['slug'] ?? ''));
+$featuredPath = trim((string) ($post['featured_image'] ?? ''));
+$ogOverride = trim((string) ($post['og_image'] ?? ''));
+// Share preview must use the post featured image (custom OG URL only if none).
+$shareImagePath = $featuredPath !== '' ? $featuredPath : ($ogOverride !== '' ? $ogOverride : null);
+$shareImage = $shareImagePath ? upload_url($shareImagePath) : '';
+
 $seo = [
     'title'       => $post['seo_title'] ?? $post['title'] ?? '',
     'description' => $post['seo_description'] ?? $post['short_description'] ?? '',
     'keywords'    => $post['seo_keywords'] ?? '',
     'canonical'   => $post['canonical_url'] ?: $postUrl,
-    'og_image'    => upload_url($post['og_image'] ?? $post['featured_image'] ?? null),
+    'og_image'    => $shareImage,
     'og_type'     => 'article',
     'schema'      => [
         '@context' => 'https://schema.org',
@@ -15,7 +21,7 @@ $seo = [
         'headline' => $post['title'] ?? '',
         'datePublished' => $post['publish_date'] ?? $post['created_at'] ?? '',
         'author'   => ['@type' => 'Person', 'name' => $post['author_name'] ?? ''],
-        'image'    => upload_url($post['featured_image'] ?? null),
+        'image'    => $shareImage !== '' ? [$shareImage] : [],
         'url'      => $postUrl,
     ],
 ];
@@ -59,9 +65,7 @@ if (!empty($post['youtube_url'])) {
     'url' => $postUrl,
     'title' => $post['title'] ?? '',
     'description' => $post['short_description'] ?? ($post['seo_description'] ?? ''),
-    'image' => !empty($post['featured_image']) || !empty($post['og_image'])
-        ? upload_url($post['featured_image'] ?? $post['og_image'] ?? null)
-        : '',
+    'image' => $shareImage,
 ]); ?>
 
 <div class="content post-content">
@@ -106,9 +110,7 @@ if (!empty($post['youtube_url'])) {
     'url' => $postUrl,
     'title' => $post['title'] ?? '',
     'description' => $post['short_description'] ?? ($post['seo_description'] ?? ''),
-    'image' => !empty($post['featured_image']) || !empty($post['og_image'])
-        ? upload_url($post['featured_image'] ?? $post['og_image'] ?? null)
-        : '',
+    'image' => $shareImage,
 ]); ?>
 
 <div class="post-nav">

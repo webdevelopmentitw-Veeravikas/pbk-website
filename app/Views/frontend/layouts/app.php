@@ -85,7 +85,7 @@ if (!function_exists('render_footer_menus')) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mukta+Malar:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="<?= e(asset('assets/css/common.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset('assets/css/common.css')) ?>?v=2">
 <link rel="stylesheet" href="<?= e(asset('assets/css/pages.css')) ?>">
 <?php if (!empty($isHomePage)): ?>
 <link rel="stylesheet" href="<?= e(asset('assets/css/home.css')) ?>">
@@ -178,6 +178,8 @@ $footerB = array_slice($footerMenusList, max(1, $half));
 </div>
 </footer>
 </div>
+
+<?php \App\Core\View::partial('frontend.partials.social-float', ['settings' => $settings ?? []]); ?>
 
 <?php if (!empty($popups)): ?>
 <?php $popup = $popups[0]; ?>

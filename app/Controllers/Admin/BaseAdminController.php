@@ -49,4 +49,14 @@ abstract class BaseAdminController extends Controller
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
     }
+
+    /** Checkbox / switch: missing or off posts as 0. */
+    protected function checkboxVal(string $key): int
+    {
+        if (!$this->request->has($key)) {
+            return 0;
+        }
+
+        return $this->boolVal($this->request->post($key));
+    }
 }

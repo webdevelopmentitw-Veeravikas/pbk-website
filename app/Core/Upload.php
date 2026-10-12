@@ -68,10 +68,14 @@ final class Upload
         $medium = null;
         $large = null;
         if ($isImage && extension_loaded('gd')) {
-            $thumb = $this->makeThumbnail($dest, $folder);
-            $medium = $this->makeVariant($dest, $folder, 'medium', (int) config('app.medium_width', 800), (int) config('app.medium_height', 600));
-            $large = $this->makeVariant($dest, $folder, 'large', (int) config('app.large_width', 1600), (int) config('app.large_height', 1200));
-            $webp = $this->toWebp($dest, $folder);
+            try {
+                $thumb = $this->makeThumbnail($dest, $folder);
+                $medium = $this->makeVariant($dest, $folder, 'medium', (int) config('app.medium_width', 800), (int) config('app.medium_height', 600));
+                $large = $this->makeVariant($dest, $folder, 'large', (int) config('app.large_width', 1600), (int) config('app.large_height', 1200));
+                $webp = $this->toWebp($dest, $folder);
+            } catch (\Throwable) {
+                // Keep original upload even if thumbnail/webp conversion fails.
+            }
         }
 
         return [
@@ -181,13 +185,56 @@ final class Upload
             return null;
         }
 
+        // imagewebp() fatals on palette/indexed images (GIF / some PNGs).
+        $src = $this->ensureTrueColor($src);
+
         $name = pathinfo($source, PATHINFO_FILENAME) . '.webp';
         $dir = UPLOAD_PATH . '/' . trim($folder, '/');
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
         $dest = $dir . '/' . $name;
-        imagewebp($src, $dest, 80);
+
+        $ok = @imagewebp($src, $dest, 80);
         imagedestroy($src);
 
+        if (!$ok || !is_file($dest)) {
+            return null;
+        }
+
         return 'uploads/' . trim($folder, '/') . '/' . $name;
+    }
+
+    /**
+     * Convert palette/indexed GD resources to truecolor for WebP and JPEG ops.
+     *
+     * @param \GdImage|resource $src
+     * @return \GdImage|resource
+     */
+    private function ensureTrueColor($src)
+    {
+        if (imageistruecolor($src)) {
+            return $src;
+        }
+
+        if (function_exists('imagepalettetotruecolor') && @imagepalettetotruecolor($src)) {
+            imagealphablending($src, true);
+            imagesavealpha($src, true);
+            return $src;
+        }
+
+        $w = imagesx($src);
+        $h = imagesy($src);
+        $true = imagecreatetruecolor($w, $h);
+        imagealphablending($true, false);
+        imagesavealpha($true, true);
+        $transparent = imagecolorallocatealpha($true, 0, 0, 0, 127);
+        imagefilledrectangle($true, 0, 0, $w, $h, $transparent);
+        imagealphablending($true, true);
+        imagecopy($true, $src, 0, 0, 0, 0, $w, $h);
+        imagedestroy($src);
+
+        return $true;
     }
 
     private function createImageResource(string $path, string $mime)

@@ -61,7 +61,7 @@ class CategoryController extends BaseAdminController
             'seo_description' => $this->request->post('seo_description'),
             'seo_keywords'    => $this->request->post('seo_keywords'),
             'sort_order'      => (int) ($this->request->post('sort_order') ?? 0),
-            'status'          => $this->boolVal($this->request->post('status', 1)),
+            'status'          => $this->checkboxVal('status'),
         ]);
 
         ActivityLog::record(Auth::id(), 'category_create', "Created category #{$id}: {$data['name']}");
@@ -108,7 +108,7 @@ class CategoryController extends BaseAdminController
             'seo_description' => $this->request->post('seo_description'),
             'seo_keywords'    => $this->request->post('seo_keywords'),
             'sort_order'      => (int) ($this->request->post('sort_order') ?? 0),
-            'status'          => $this->boolVal($this->request->post('status', 1)),
+            'status'          => $this->checkboxVal('status'),
         ];
 
         if ($file = $this->request->file('banner')) {

@@ -29,6 +29,7 @@ $val = fn($key, $default = '') => e(old($key, $item[$key] ?? $default));
         </div>
         <div class="col-md-3 d-flex align-items-end">
             <div class="form-check form-switch">
+                <input type="hidden" name="status" value="0">
                 <input type="checkbox" class="form-check-input" name="status" value="1" id="catStatus" <?= old('status', $item['status'] ?? 1) ? 'checked' : '' ?>>
                 <label class="form-check-label" for="catStatus">Active</label>
             </div>

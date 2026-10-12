@@ -36,11 +36,45 @@ final class App
 
     public function run(): void
     {
+        $this->redirectLegacySubdirPrefix();
+
         // Track visitor (simple)
         $this->trackVisitor();
 
         $request = new Request();
         $this->router->dispatch($request);
+    }
+
+    /**
+     * Live site is at domain root. Old bookmarks/menus using /p/... must redirect.
+     */
+    private function redirectLegacySubdirPrefix(): void
+    {
+        if (BASE_PATH !== '') {
+            return;
+        }
+
+        $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+        $uri = '/' . trim(str_replace('\\', '/', $uri), '/');
+        if ($uri !== '/') {
+            $uri = rtrim($uri, '/') ?: '/';
+        }
+
+        if ($uri !== '/p' && !str_starts_with($uri, '/p/')) {
+            return;
+        }
+
+        $target = $uri === '/p' ? '/' : substr($uri, strlen('/p'));
+        if ($target === '' || $target === false) {
+            $target = '/';
+        }
+        $query = (string) ($_SERVER['QUERY_STRING'] ?? '');
+        if ($query !== '') {
+            $target .= '?' . $query;
+        }
+
+        header('Location: ' . $target, true, 301);
+        exit;
     }
 
     private function trackVisitor(): void

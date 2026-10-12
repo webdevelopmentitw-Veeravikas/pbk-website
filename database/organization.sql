@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS `organization_members` (
   `assembly` VARCHAR(150) DEFAULT NULL,
   `parliament` VARCHAR(150) DEFAULT NULL,
   `district` VARCHAR(150) DEFAULT NULL,
+  `address` TEXT DEFAULT NULL,
   `state` VARCHAR(100) DEFAULT 'தமிழ்நாடு',
   `zone` VARCHAR(100) DEFAULT NULL,
   `phone` VARCHAR(40) DEFAULT NULL,

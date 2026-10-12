@@ -80,6 +80,50 @@ class MediaController extends BaseAdminController
         $this->json(['success' => true, 'message' => count($stored) . ' file(s) uploaded.', 'data' => $stored]);
     }
 
+    /**
+     * CKEditor Simple Upload Adapter endpoint.
+     * Expects field name "upload" and returns { "url": "..." }.
+     */
+    public function editorUpload(): void
+    {
+        $file = $this->request->file('upload');
+        if (!$file || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+            $this->json(['error' => ['message' => 'No image uploaded.']], 422);
+        }
+
+        try {
+            $stored = (new Upload())->store($file, 'media/editor', true);
+            if (!$stored || empty($stored['path'])) {
+                $this->json(['error' => ['message' => 'Upload failed.']], 422);
+            }
+
+            $info = @getimagesize(PUBLIC_PATH . '/' . ltrim($stored['path'], '/'));
+            $id = (new Media())->create([
+                'user_id'       => Auth::id(),
+                'folder'        => 'editor',
+                'filename'      => basename($stored['path']),
+                'original_name' => $stored['name'],
+                'path'          => $stored['path'],
+                'thumb_path'    => $stored['thumb'] ?? null,
+                'webp_path'     => $stored['webp'] ?? null,
+                'mime_type'     => $stored['mime'],
+                'size'          => $stored['size'],
+                'width'         => $info[0] ?? null,
+                'height'        => $info[1] ?? null,
+                'alt_text'      => pathinfo($stored['name'], PATHINFO_FILENAME),
+            ]);
+
+            ActivityLog::record(Auth::id(), 'media_editor_upload', "Editor uploaded media #{$id}");
+
+            $this->json([
+                'url' => $stored['url'] ?? upload_url($stored['path']),
+                'uploaded' => true,
+            ]);
+        } catch (\Throwable $e) {
+            $this->json(['error' => ['message' => $e->getMessage()]], 422);
+        }
+    }
+
     public function rename(int $id): void
     {
         $model = new Media();

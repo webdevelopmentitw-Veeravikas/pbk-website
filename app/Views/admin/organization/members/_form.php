@@ -20,6 +20,15 @@ $preselectTeam = $preselectTeam ?? 0;
             <input type="text" name="name" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?>" value="<?= $val('name') ?>" required>
         </div>
         <div class="col-md-6">
+            <label class="form-label">Profile Photo</label>
+            <?php if (!empty($item['photo'])): ?>
+                <div class="mb-2"><img src="<?= upload_url($item['photo']) ?>" class="image-preview rounded" alt="" style="max-height:120px;"></div>
+            <?php endif; ?>
+            <input type="file" name="photo" class="form-control" accept="image/jpeg,image/png,image/webp,image/gif" data-preview="#photoPreview">
+            <div class="form-text">JPG, PNG, or WebP. Shown on the organization page.</div>
+            <img id="photoPreview" class="image-preview mt-2 d-none rounded" alt="" style="max-height:120px;">
+        </div>
+        <div class="col-md-6">
             <label class="form-label">Tamil Name</label>
             <input type="text" name="tamil_name" class="form-control" value="<?= $val('tamil_name') ?>">
         </div>
@@ -45,12 +54,14 @@ $preselectTeam = $preselectTeam ?? 0;
         </div>
         <div class="col-md-2 d-flex align-items-end">
             <div class="form-check form-switch">
+                <input type="hidden" name="featured" value="0">
                 <input type="checkbox" class="form-check-input" name="featured" value="1" id="memFeatured" <?= old('featured', $item['featured'] ?? 0) ? 'checked' : '' ?>>
                 <label class="form-check-label" for="memFeatured">Featured</label>
             </div>
         </div>
         <div class="col-md-2 d-flex align-items-end">
             <div class="form-check form-switch">
+                <input type="hidden" name="status" value="0">
                 <input type="checkbox" class="form-check-input" name="status" value="1" id="memStatus" <?= old('status', $item['status'] ?? 1) ? 'checked' : '' ?>>
                 <label class="form-check-label" for="memStatus">Enabled</label>
             </div>
@@ -72,6 +83,10 @@ $preselectTeam = $preselectTeam ?? 0;
         <div class="col-md-4">
             <label class="form-label">District</label>
             <input type="text" name="district" class="form-control" value="<?= $val('district') ?>">
+        </div>
+        <div class="col-12">
+            <label class="form-label">Address</label>
+            <textarea name="address" class="form-control" rows="2"><?= $val('address') ?></textarea>
         </div>
         <div class="col-md-4">
             <label class="form-label">State</label>
@@ -125,14 +140,6 @@ $preselectTeam = $preselectTeam ?? 0;
 <div class="form-section">
     <h5 class="mb-3">Media & Bio</h5>
     <div class="row g-3">
-        <div class="col-md-6">
-            <label class="form-label">Profile Photo</label>
-            <?php if (!empty($item['photo'])): ?>
-                <div class="mb-2"><img src="<?= upload_url($item['photo']) ?>" class="image-preview rounded" alt="" style="max-height:120px;"></div>
-            <?php endif; ?>
-            <input type="file" name="photo" class="form-control" accept="image/jpeg,image/png,image/webp" data-preview="#photoPreview">
-            <img id="photoPreview" class="image-preview mt-2 d-none rounded" alt="" style="max-height:120px;">
-        </div>
         <div class="col-md-6">
             <label class="form-label">Cover Image</label>
             <?php if (!empty($item['cover_image'])): ?>

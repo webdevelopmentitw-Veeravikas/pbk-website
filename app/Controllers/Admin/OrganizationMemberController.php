@@ -35,8 +35,8 @@ class OrganizationMemberController extends BaseAdminController
             $params = [];
             if ($filters['q'] !== '') {
                 $like = '%' . $filters['q'] . '%';
-                $where[] = '(m.name LIKE :q1 OR m.tamil_name LIKE :q2 OR m.english_name LIKE :q3 OR m.designation LIKE :q4)';
-                $params = ['q1' => $like, 'q2' => $like, 'q3' => $like, 'q4' => $like];
+                $where[] = '(m.name LIKE :q1 OR m.tamil_name LIKE :q2 OR m.english_name LIKE :q3 OR m.designation LIKE :q4 OR m.phone LIKE :q5 OR m.address LIKE :q6)';
+                $params = ['q1' => $like, 'q2' => $like, 'q3' => $like, 'q4' => $like, 'q5' => $like, 'q6' => $like];
             }
             if ($filters['team_id'] !== '') {
                 $where[] = 'm.team_id = :team_id';
@@ -134,6 +134,34 @@ class OrganizationMemberController extends BaseAdminController
         $this->redirect(url('/admin/organization/members'));
     }
 
+    public function photo(int $id): void
+    {
+        $model = new OrganizationMember();
+        $member = $model->find($id);
+        if (!$member) {
+            $this->notFound();
+        }
+
+        $upload = new Upload();
+        try {
+            $photo = $this->storeImage($upload, 'photo');
+        } catch (\Throwable $e) {
+            $this->flash('danger', $e->getMessage());
+            $this->redirect($this->membersReturnUrl());
+        }
+
+        if (!$photo) {
+            $this->flash('danger', 'Please choose a photo (JPG, PNG, or WebP).');
+            $this->redirect($this->membersReturnUrl());
+        }
+
+        $upload->delete($member['photo'] ?? null);
+        $model->update($id, ['photo' => $photo]);
+        ActivityLog::record(Auth::id(), 'org_member_photo', "Updated photo for member #{$id}");
+        $this->flash('success', 'Photo updated.');
+        $this->redirect($this->membersReturnUrl());
+    }
+
     public function destroy(int $id): void
     {
         $model = new OrganizationMember();
@@ -206,14 +234,14 @@ class OrganizationMemberController extends BaseAdminController
         $out = fopen('php://output', 'w');
         fputcsv($out, [
             'id', 'team', 'name', 'tamil_name', 'english_name', 'designation', 'position',
-            'assembly', 'parliament', 'district', 'state', 'zone', 'phone', 'email',
+            'assembly', 'parliament', 'district', 'address', 'state', 'zone', 'phone', 'email',
             'featured', 'status', 'joining_date',
         ]);
         foreach ($rows as $r) {
             fputcsv($out, [
                 $r['id'], $r['team_name'], $r['name'], $r['tamil_name'], $r['english_name'],
                 $r['designation'], $r['position'], $r['assembly'], $r['parliament'],
-                $r['district'], $r['state'], $r['zone'], $r['phone'], $r['email'],
+                $r['district'], $r['address'] ?? '', $r['state'], $r['zone'], $r['phone'], $r['email'],
                 $r['featured'], $r['status'], $r['joining_date'],
             ]);
         }
@@ -263,6 +291,7 @@ class OrganizationMemberController extends BaseAdminController
                 'assembly' => $map['assembly'] ?? null,
                 'parliament' => $map['parliament'] ?? null,
                 'district' => $map['district'] ?? null,
+                'address' => $map['address'] ?? null,
                 'state' => $map['state'] ?? 'தமிழ்நாடு',
                 'zone' => $map['zone'] ?? null,
                 'phone' => $map['phone'] ?? null,
@@ -293,6 +322,7 @@ class OrganizationMemberController extends BaseAdminController
             'assembly' => $this->request->post('assembly'),
             'parliament' => $this->request->post('parliament'),
             'district' => $this->request->post('district'),
+            'address' => $this->request->post('address'),
             'state' => $this->request->post('state') ?: 'தமிழ்நாடு',
             'zone' => $this->request->post('zone'),
             'phone' => $this->request->post('phone'),
@@ -326,6 +356,16 @@ class OrganizationMemberController extends BaseAdminController
         }
 
         return $payload;
+    }
+
+    private function membersReturnUrl(): string
+    {
+        $return = (string) $this->request->post('return_to', '');
+        if (!preg_match('#^/admin/organization/members(\?[^\r\n]*)?$#u', $return)) {
+            $return = '/admin/organization/members';
+        }
+
+        return url($return);
     }
 
     private function storeImage(Upload $upload, string $field): ?string

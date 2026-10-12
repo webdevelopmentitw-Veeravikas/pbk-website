@@ -49,7 +49,7 @@ class EventController extends BaseAdminController
             'event_time'        => $this->request->post('event_time') ?: null,
             'banner'            => $banner,
             'registration_link' => $this->request->post('registration_link'),
-            'status'            => $this->boolVal($this->request->post('status', 1)),
+            'status'            => $this->checkboxVal('status'),
         ]);
 
         ActivityLog::record(Auth::id(), 'event_create', "Created event #{$id}: {$data['title']}");
@@ -91,7 +91,7 @@ class EventController extends BaseAdminController
             'event_date'        => $this->request->post('event_date') ?: null,
             'event_time'        => $this->request->post('event_time') ?: null,
             'registration_link' => $this->request->post('registration_link'),
-            'status'            => $this->boolVal($this->request->post('status', 1)),
+            'status'            => $this->checkboxVal('status'),
         ];
 
         if ($file = $this->request->file('banner')) {

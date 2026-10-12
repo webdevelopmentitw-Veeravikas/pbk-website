@@ -11,6 +11,10 @@
   var steps = document.querySelectorAll('.ms-step');
   var panels = document.querySelectorAll('.ms-panel');
   var msg = document.getElementById('msMsg');
+  var AGE_MIN = 18;
+  var AGE_MSG = 'உறுப்பினர் பதிவுக்கு வயது 18 அல்லது அதற்கு மேல் இருக்க வேண்டும்.';
+  var dobInput = document.getElementById('dobInput');
+  var dobError = document.getElementById('dobError');
 
   function goTo(step) {
     current = step;
@@ -25,9 +29,94 @@
     window.scrollTo({ top: form.getBoundingClientRect().top + window.scrollY - 90, behavior: 'smooth' });
   }
 
+  function pad(n) {
+    return n < 10 ? '0' + n : String(n);
+  }
+
+  function isoDate(d) {
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  function maxAdultDob() {
+    var d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setFullYear(d.getFullYear() - AGE_MIN);
+    return d;
+  }
+
+  function ageFromDob(value) {
+    if (!value) return null;
+    var parts = String(value).split('-');
+    if (parts.length !== 3) return null;
+    var y = parseInt(parts[0], 10);
+    var m = parseInt(parts[1], 10) - 1;
+    var day = parseInt(parts[2], 10);
+    var birth = new Date(y, m, day);
+    if (isNaN(birth.getTime()) || birth.getFullYear() !== y || birth.getMonth() !== m || birth.getDate() !== day) {
+      return null;
+    }
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    var age = today.getFullYear() - birth.getFullYear();
+    var monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age -= 1;
+    }
+    return age;
+  }
+
+  function setDobError(message) {
+    if (!dobError) return;
+    if (message) {
+      dobError.hidden = false;
+      dobError.textContent = message;
+    } else {
+      dobError.hidden = true;
+      dobError.textContent = '';
+    }
+  }
+
+  function validateDob() {
+    if (!dobInput) return true;
+    dobInput.setCustomValidity('');
+    if (dobInput.value) {
+      var age = ageFromDob(dobInput.value);
+      if (age === null || age < AGE_MIN) {
+        dobInput.setCustomValidity(AGE_MSG);
+      }
+    }
+    var valid = dobInput.checkValidity();
+    var field = dobInput.closest('.field');
+    if (field) field.classList.toggle('invalid', !valid);
+    setDobError(valid ? '' : (dobInput.validationMessage || AGE_MSG));
+    return valid;
+  }
+
+  if (dobInput) {
+    dobInput.max = isoDate(maxAdultDob());
+    dobInput.addEventListener('change', validateDob);
+    dobInput.addEventListener('blur', validateDob);
+    dobInput.addEventListener('input', validateDob);
+  }
+
+  function firstErrorMessage(json) {
+    if (!json) return '';
+    if (json.message) return json.message;
+    if (json.errors && typeof json.errors === 'object') {
+      for (var key in json.errors) {
+        if (!Object.prototype.hasOwnProperty.call(json.errors, key)) continue;
+        var list = json.errors[key];
+        if (Array.isArray(list) && list[0]) return list[0];
+        if (typeof list === 'string' && list) return list;
+      }
+    }
+    return '';
+  }
+
   function validatePanel(step) {
     var panel = form.querySelector('.ms-panel[data-panel="' + step + '"]');
     if (!panel) return true;
+    if (step === 1) validateDob();
     var ok = true;
     panel.querySelectorAll('[required]').forEach(function (el) {
       var field = el.closest('.field');
@@ -95,10 +184,14 @@
           window.location.href = res.json.redirect;
           return;
         }
+        if (res.json && res.json.errors && res.json.errors.dob) {
+          goTo(1);
+          validateDob();
+        }
         if (msg) {
           msg.hidden = false;
           msg.className = 'form-msg err';
-          msg.textContent = (res.json && res.json.message) || 'பதிவு தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்.';
+          msg.textContent = firstErrorMessage(res.json) || 'பதிவு தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்.';
         }
       })
       .catch(function () {

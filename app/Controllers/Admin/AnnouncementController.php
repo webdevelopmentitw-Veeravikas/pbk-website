@@ -49,7 +49,7 @@ class AnnouncementController extends BaseAdminController
             'link'      => $this->request->post('link'),
             'starts_at' => $this->request->post('starts_at') ?: null,
             'ends_at'   => $this->request->post('ends_at') ?: null,
-            'status'    => $this->boolVal($this->request->post('status', 1)),
+            'status'    => $this->checkboxVal('status'),
         ]);
 
         ActivityLog::record(Auth::id(), 'announcement_create', "Created announcement #{$id}: {$data['title']}");
@@ -89,7 +89,7 @@ class AnnouncementController extends BaseAdminController
             'link'      => $this->request->post('link'),
             'starts_at' => $this->request->post('starts_at') ?: null,
             'ends_at'   => $this->request->post('ends_at') ?: null,
-            'status'    => $this->boolVal($this->request->post('status', 1)),
+            'status'    => $this->checkboxVal('status'),
         ]);
 
         ActivityLog::record(Auth::id(), 'announcement_update', "Updated announcement #{$id}");

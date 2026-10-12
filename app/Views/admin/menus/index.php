@@ -23,6 +23,60 @@
     </div>
 </div>
 
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="fa-solid fa-file-lines me-2"></i>Pages list (select for header menu)</span>
+        <a href="<?= url('/admin/pages') ?>" class="btn btn-sm btn-outline-secondary">Manage pages</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Page</th>
+                        <th>Slug</th>
+                        <th>Status</th>
+                        <th>Header menu</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($pages)): ?>
+                    <tr><td colspan="5" class="text-center text-muted py-4">No pages found.</td></tr>
+                    <?php else: ?>
+                    <?php foreach ($pages as $page): ?>
+                    <tr>
+                        <td><?= e($page['title'] ?? '') ?></td>
+                        <td><code class="small">/page/<?= e($page['slug'] ?? '') ?></code></td>
+                        <td>
+                            <span class="badge bg-<?= (int) ($page['status'] ?? 0) ? 'success' : 'secondary' ?>">
+                                <?= (int) ($page['status'] ?? 0) ? 'Active' : 'Inactive' ?>
+                            </span>
+                        </td>
+                        <td>
+                            <?php if ((int) ($page['show_in_menu'] ?? 0) === 1): ?>
+                                <span class="badge bg-primary">Selected</span>
+                            <?php else: ?>
+                                <span class="badge bg-light text-dark">Not selected</span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="text-end">
+                            <form action="<?= url('/admin/menus/toggle-page/' . (int) $page['id']) ?>" method="POST" class="d-inline">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="btn btn-sm btn-outline-<?= (int) ($page['show_in_menu'] ?? 0) ? 'secondary' : 'primary' ?>">
+                                    <?= (int) ($page['show_in_menu'] ?? 0) ? 'Remove from header' : 'Add to header' ?>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header"><i class="fa-solid fa-list me-2"></i>Menu Items</div>
     <div class="card-body">
@@ -37,6 +91,9 @@
                 <strong><?= e($item['title']) ?></strong>
                 <span class="badge bg-light text-dark ms-2"><?= e($item['location']) ?></span>
                 <?php if (!(int) ($item['status'] ?? 0)): ?><span class="badge bg-secondary ms-1">Inactive</span><?php endif; ?>
+                <?php if (str_starts_with((string) ($item['url'] ?? ''), '/page/')): ?>
+                    <span class="badge bg-info text-dark ms-1">Page</span>
+                <?php endif; ?>
                 <span class="text-muted small ms-2"><?= e($item['url'] ?? '') ?></span>
                 <div class="float-end">
                     <a href="<?= url('/admin/menus/' . $item['id'] . '/edit') ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>

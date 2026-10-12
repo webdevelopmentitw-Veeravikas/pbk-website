@@ -14,22 +14,52 @@ define('UPLOAD_PATH', PUBLIC_PATH . '/uploads');
 define('VIEW_PATH', APP_PATH . '/Views');
 
 /**
- * Subdirectory install path (local XAMPP: /p). Empty on live domain root.
- * Override with env CMS_BASE_PATH if auto-detect is wrong.
+ * Subdirectory install path.
+ * - Local XAMPP (htdocs/p): "/p"
+ * - Live domain root (pbkofficial.in): ""
  */
-$envBase = getenv('CMS_BASE_PATH');
-if ($envBase !== false) {
-    $basePath = rtrim(str_replace('\\', '/', (string) $envBase), '/');
-    if ($basePath === '/') {
-        $basePath = '';
-    }
-} else {
-    $scriptName = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? '/index.php'));
-    $basePath = str_replace('\\', '/', dirname($scriptName));
-    if ($basePath === '/' || $basePath === '.' || $basePath === '') {
-        $basePath = '';
-    } else {
-        $basePath = rtrim($basePath, '/');
+$host = strtolower((string) ($_SERVER['HTTP_HOST'] ?? ''));
+$isLocalHost = $host === ''
+    || str_contains($host, 'localhost')
+    || str_starts_with($host, '127.0.0.1');
+
+$basePath = null;
+
+$localOverride = CONFIG_PATH . '/base_path.local.php';
+if ($isLocalHost && is_file($localOverride)) {
+    $basePath = require $localOverride;
+}
+
+if ($basePath === null) {
+    $envBase = getenv('CMS_BASE_PATH');
+    if ($envBase !== false) {
+        $basePath = $envBase;
     }
 }
+
+if ($basePath === null) {
+    $docRoot = str_replace('\\', '/', (string) ($_SERVER['DOCUMENT_ROOT'] ?? ''));
+    $docRoot = rtrim($docRoot, '/');
+    $project = str_replace('\\', '/', ROOT_PATH);
+    if ($docRoot !== '' && str_starts_with($project, $docRoot)) {
+        $basePath = substr($project, strlen($docRoot)) ?: '';
+    }
+}
+
+if ($basePath === null) {
+    $scriptName = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? '/index.php'));
+    $basePath = str_replace('\\', '/', dirname($scriptName));
+}
+
+$basePath = str_replace('\\', '/', (string) $basePath);
+$basePath = rtrim($basePath, '/');
+if ($basePath === '/' || $basePath === '.' || $basePath === '') {
+    $basePath = '';
+}
+
+// Live/production domains are served from web root — never keep "/p".
+if (!$isLocalHost && ($basePath === '/p' || $basePath === 'p')) {
+    $basePath = '';
+}
+
 define('BASE_PATH', $basePath);

@@ -374,6 +374,67 @@ footer a:hover { color: #ffb4b4; }
 .footer-logo img { width: 100%; height: 100%; object-fit: contain; }
 .social-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
 .social-links a { color: #fff; font-weight: 700; font-size: 13px; }
+
+.social-float {
+  position: fixed;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.social-float-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .18);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.social-float-btn svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+.social-float-btn:hover,
+.social-float-btn:focus-visible {
+  transform: translateX(-4px) scale(1.06);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .26);
+}
+.social-float-facebook { background: #1877f2; }
+.social-float-twitter { background: #111111; }
+.social-float-instagram {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+}
+.social-float-youtube { background: #ff0000; }
+.social-float-tip {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: #111;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 7px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease;
+}
+.social-float-btn:hover .social-float-tip,
+.social-float-btn:focus-visible .social-float-tip {
+  opacity: 1;
+}
+
 .newsletter-form { display: flex; flex-direction: column; gap: 10px; }
 .newsletter-form input {
   border: 1px solid rgba(255,255,255,.2);
@@ -446,9 +507,18 @@ footer a:hover { color: #ffb4b4; }
   .blog-grid, .cat-grid { grid-template-columns: 1fr; }
   footer .fgrid { grid-template-columns: 1fr; }
   .section-head h2 { font-size: 22px; }
+  .social-float {
+    right: 8px;
+    top: auto;
+    bottom: 88px;
+    transform: none;
+    gap: 8px;
+  }
+  .social-float-btn { width: 40px; height: 40px; }
+  .social-float-tip { display: none; }
 }
 
 @media print {
-  header.nav, footer, .share-buttons, .popup-overlay, .flash { display: none !important; }
+  header.nav, footer, .share-buttons, .popup-overlay, .flash, .social-float { display: none !important; }
   body { color: #000; background: #fff; }
 }

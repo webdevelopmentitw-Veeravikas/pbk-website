@@ -46,7 +46,7 @@ class VideoController extends BaseAdminController
             'description' => $this->request->post('description'),
             'youtube_url' => $data['youtube_url'],
             'thumbnail'   => $thumbnail,
-            'status'      => $this->boolVal($this->request->post('status', 1)),
+            'status'      => $this->checkboxVal('status'),
         ]);
 
         ActivityLog::record(Auth::id(), 'video_create', "Created video #{$id}: {$data['title']}");
@@ -85,7 +85,7 @@ class VideoController extends BaseAdminController
             'slug'        => $slug,
             'description' => $this->request->post('description'),
             'youtube_url' => $data['youtube_url'],
-            'status'      => $this->boolVal($this->request->post('status', 1)),
+            'status'      => $this->checkboxVal('status'),
         ];
 
         if ($file = $this->request->file('thumbnail')) {

@@ -50,6 +50,7 @@ $socials = [
 
         <ul class="org-profile-facts">
             <?php if (!empty($member['district'])): ?><li><span>மாவட்டம்</span><?= e($member['district']) ?></li><?php endif; ?>
+            <?php if (!empty($member['address'])): ?><li><span>முகவரி</span><?= e($member['address']) ?></li><?php endif; ?>
             <?php if (!empty($member['assembly'])): ?><li><span>சட்டமன்ற தொகுதி</span><?= e($member['assembly']) ?></li><?php endif; ?>
             <?php if (!empty($member['parliament'])): ?><li><span>நாடாளுமன்ற தொகுதி</span><?= e($member['parliament']) ?></li><?php endif; ?>
             <?php if (!empty($member['position'])): ?><li><span>பொறுப்பு</span><?= e($member['position']) ?></li><?php endif; ?>

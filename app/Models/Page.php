@@ -22,6 +22,7 @@ class Page extends Model
         'canonical_url',
         'sort_order',
         'status',
+        'show_in_menu',
     ];
 
     public function findBySlug(string $slug): ?array

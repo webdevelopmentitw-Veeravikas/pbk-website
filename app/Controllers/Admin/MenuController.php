@@ -7,11 +7,15 @@ namespace App\Controllers\Admin;
 use App\Core\Auth;
 use App\Models\ActivityLog;
 use App\Models\Menu;
+use App\Models\Page;
+use App\Services\PageMenuSync;
 
 class MenuController extends BaseAdminController
 {
     public function index(): void
     {
+        (new PageMenuSync())->syncAll();
+
         $model = new Menu();
         $location = $this->request->get('location');
 
@@ -19,7 +23,32 @@ class MenuController extends BaseAdminController
             'menus'    => $model->all('sort_order ASC, id ASC'),
             'tree'     => $model->tree($location ?: null),
             'location' => $location,
+            'pages'    => (new Page())->all('sort_order ASC, title ASC'),
         ], 'admin.layouts.app');
+    }
+
+    public function togglePage(int $id): void
+    {
+        $model = new Page();
+        $page = $model->find($id);
+        if (!$page) {
+            $this->notFound();
+        }
+
+        $show = (int) ($page['show_in_menu'] ?? 0) === 1 ? 0 : 1;
+        $model->update($id, ['show_in_menu' => $show]);
+
+        $page['show_in_menu'] = $show;
+        (new PageMenuSync())->syncPage($page);
+
+        ActivityLog::record(
+            Auth::id(),
+            'menu_toggle_page',
+            ($show ? 'Added' : 'Removed') . " page #{$id} from header menu"
+        );
+
+        $this->flash('success', $show ? 'Page added to header menu.' : 'Page removed from header menu.');
+        $this->redirect(url('/admin/menus'));
     }
 
     public function create(): void
@@ -28,6 +57,7 @@ class MenuController extends BaseAdminController
 
         $this->view('admin.menus.create', [
             'parents' => $model->all('title ASC'),
+            'pages'   => (new Page())->all('sort_order ASC, title ASC'),
         ], 'admin.layouts.app');
     }
 
@@ -53,7 +83,7 @@ class MenuController extends BaseAdminController
             'icon'       => $this->request->post('icon'),
             'location'   => $data['location'],
             'sort_order' => (int) ($this->request->post('sort_order') ?? 0),
-            'status'     => $this->boolVal($this->request->post('status', 1)),
+            'status'     => $this->checkboxVal('status'),
         ]);
 
         ActivityLog::record(Auth::id(), 'menu_create', "Created menu item #{$id}: {$data['title']}");
@@ -72,6 +102,7 @@ class MenuController extends BaseAdminController
         $this->view('admin.menus.edit', [
             'menu'    => $menu,
             'parents' => $model->where('id != :id', ['id' => $id], 'title ASC'),
+            'pages'   => (new Page())->all('sort_order ASC, title ASC'),
         ], 'admin.layouts.app');
     }
 
@@ -100,7 +131,7 @@ class MenuController extends BaseAdminController
             'icon'       => $this->request->post('icon'),
             'location'   => $data['location'],
             'sort_order' => (int) ($this->request->post('sort_order') ?? 0),
-            'status'     => $this->boolVal($this->request->post('status', 1)),
+            'status'     => $this->checkboxVal('status'),
         ]);
 
         ActivityLog::record(Auth::id(), 'menu_update', "Updated menu item #{$id}");

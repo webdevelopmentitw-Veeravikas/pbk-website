@@ -294,6 +294,57 @@ body.admin-body {
     background: var(--card-bg);
 }
 
+.editor-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.5rem;
+    padding: 0.55rem 0.7rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.55rem;
+}
+
+[data-theme="dark"] .editor-tools {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+.editor-tools-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-right: 0.15rem;
+}
+
+.editor-tools-sep {
+    width: 1px;
+    height: 1.25rem;
+    background: #cbd5e1;
+    margin: 0 0.25rem;
+}
+
+[data-theme="dark"] .editor-tools-sep {
+    background: #475569;
+}
+
+.ck-editor__editable {
+    min-height: 280px;
+}
+
+.ck-content figure.table table td,
+.ck-content figure.table table th {
+    vertical-align: top;
+    min-width: 120px;
+}
+
+.ck-content img {
+    max-width: 100%;
+    height: auto;
+}
+
 .image-preview {
     max-width: 200px;
     max-height: 150px;

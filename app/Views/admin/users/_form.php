@@ -37,6 +37,7 @@ $isEdit = !empty($item['id']);
         </div>
         <div class="col-md-4 d-flex align-items-end">
             <div class="form-check form-switch">
+                <input type="hidden" name="status" value="0">
                 <input type="checkbox" class="form-check-input" name="status" value="1" id="userStatus" <?= old('status', $item['status'] ?? 1) ? 'checked' : '' ?>>
                 <label class="form-check-label" for="userStatus">Active</label>
             </div>

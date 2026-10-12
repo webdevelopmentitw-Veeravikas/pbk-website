@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Optional local override for BASE_PATH.
+ * Local XAMPP example: return '/p';
+ * Live domain root:    return '';
+ *
+ * Copy this file to base_path.local.php (same folder) if auto-detect is wrong.
+ */
+return '/p';

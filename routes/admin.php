@@ -58,6 +58,7 @@ $router->group(['prefix' => '/admin', 'middleware' => ['admin']], function ($rou
     $router->post('/menus/{id}', [MenuController::class, 'update'], ['csrf']);
     $router->post('/menus/{id}/delete', [MenuController::class, 'destroy'], ['csrf']);
     $router->post('/menus/reorder', [MenuController::class, 'reorder'], ['csrf']);
+    $router->post('/menus/toggle-page/{id}', [MenuController::class, 'togglePage'], ['csrf']);
 
     // Categories
     $router->get('/categories', [CategoryController::class, 'index']);
@@ -128,6 +129,7 @@ $router->group(['prefix' => '/admin', 'middleware' => ['admin']], function ($rou
     // Media
     $router->get('/media', [MediaController::class, 'index']);
     $router->post('/media/upload', [MediaController::class, 'upload'], ['csrf']);
+    $router->post('/media/editor-upload', [MediaController::class, 'editorUpload'], ['csrf']);
     $router->post('/media/{id}/rename', [MediaController::class, 'rename'], ['csrf']);
     $router->post('/media/{id}/delete', [MediaController::class, 'destroy'], ['csrf']);
     $router->get('/media/folders', [MediaController::class, 'folders']);
@@ -193,6 +195,7 @@ $router->group(['prefix' => '/admin', 'middleware' => ['admin']], function ($rou
     $router->post('/organization/members/import', [OrganizationMemberController::class, 'import'], ['csrf']);
     $router->post('/organization/members/bulk', [OrganizationMemberController::class, 'bulk'], ['csrf']);
     $router->post('/organization/members/reorder', [OrganizationMemberController::class, 'reorder'], ['csrf']);
+    $router->post('/organization/members/{id}/photo', [OrganizationMemberController::class, 'photo'], ['csrf']);
     $router->get('/organization/members/{id}/edit', [OrganizationMemberController::class, 'edit']);
     $router->post('/organization/members/{id}', [OrganizationMemberController::class, 'update'], ['csrf']);
     $router->post('/organization/members/{id}/delete', [OrganizationMemberController::class, 'destroy'], ['csrf']);

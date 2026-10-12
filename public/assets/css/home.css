@@ -91,6 +91,23 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 28px;
+  align-items: stretch;
+}
+
+.media-teaser-col {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+}
+
+.media-teaser-col .media-carousel {
+  flex: 1 1 auto;
+}
+
+.media-teaser-btn {
+  margin-top: auto;
+  align-self: flex-start;
 }
 
 .teaser-title {
@@ -98,6 +115,126 @@
   color: var(--navy);
   margin: 0 0 16px;
   font-weight: 800;
+}
+
+/* Shared home media carousel (videos + gallery) */
+.media-carousel {
+  position: relative;
+  width: 100%;
+}
+
+.media-carousel-track {
+  position: relative;
+  min-height: 1px;
+}
+
+.media-carousel-slide {
+  display: none;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+}
+
+.media-carousel-slide.active {
+  display: flex;
+}
+
+.media-carousel-media {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  background: #fff;
+}
+
+.media-carousel-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .25s ease;
+}
+
+.media-carousel-slide:hover .media-carousel-media img {
+  transform: scale(1.03);
+}
+
+.media-carousel-media.has-play .play-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(46, 49, 146, .35);
+  color: #fff;
+  font-size: 28px;
+  margin: 0;
+  border-radius: 0;
+}
+
+.media-carousel-title {
+  display: block;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.35;
+  min-height: 1.35em;
+}
+
+.media-carousel-nav {
+  position: absolute;
+  top: calc((100% - 1.35em - 10px) / 2);
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .92);
+  color: var(--navy);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.media-carousel-nav.prev { left: 10px; }
+.media-carousel-nav.next { right: 10px; }
+
+.media-carousel-nav:hover {
+  background: #fff;
+  color: var(--red);
+}
+
+.media-carousel-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.media-carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: rgba(46, 49, 146, .25);
+  cursor: pointer;
+}
+
+.media-carousel-dot.active {
+  background: var(--red);
+  transform: scale(1.15);
 }
 
 /* Soft event cards on home */

@@ -143,34 +143,60 @@ $alt = $slide['title'] ?? $siteName;
 </div>
 <div class="media-teaser-grid">
 <?php if (!empty($videos)): ?>
-<div>
+<?php $homeVideos = array_slice($videos, 0, 6); ?>
+<div class="media-teaser-col">
 <h3 class="teaser-title">காணொளிகள்</h3>
-<div class="video-grid compact">
-<?php foreach (array_slice($videos, 0, 3) as $video): ?>
-<a href="<?= e(url('/videos/' . $video['slug'])) ?>" class="video-card">
-<div class="video-thumb">
-<img src="<?= e(upload_url($video['thumbnail'] ?? null)) ?>" alt="<?= e($video['title']) ?>" loading="lazy">
-<span class="play-icon">▶</span>
-</div>
-<h4><?= e(str_limit($video['title'], 60)) ?></h4>
+<div class="media-carousel" id="videoCarousel" data-interval="5500">
+<div class="media-carousel-track">
+<?php foreach ($homeVideos as $i => $video): ?>
+<a href="<?= e(url('/videos/' . $video['slug'])) ?>" class="media-carousel-slide<?= $i === 0 ? ' active' : '' ?>" data-slide="<?= (int) $i ?>">
+<span class="media-carousel-media has-play">
+<img src="<?= e(upload_url($video['thumbnail'] ?? null)) ?>" alt="<?= e($video['title']) ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
+<span class="play-icon" aria-hidden="true">▶</span>
+</span>
+<span class="media-carousel-title"><?= e(str_limit($video['title'], 60)) ?></span>
 </a>
 <?php endforeach; ?>
 </div>
-<a href="<?= e(url('/videos')) ?>" class="btn btn-outline btn-sm">அனைத்து காணொளிகள்</a>
+<?php if (count($homeVideos) > 1): ?>
+<button type="button" class="media-carousel-nav prev" aria-label="Previous video">‹</button>
+<button type="button" class="media-carousel-nav next" aria-label="Next video">›</button>
+<div class="media-carousel-dots" role="tablist" aria-label="Video slides">
+<?php foreach ($homeVideos as $i => $video): ?>
+<button type="button" class="media-carousel-dot<?= $i === 0 ? ' active' : '' ?>" data-slide="<?= (int) $i ?>" aria-label="<?= e($video['title']) ?>"></button>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+</div>
+<a href="<?= e(url('/videos')) ?>" class="btn btn-outline btn-sm media-teaser-btn">அனைத்து காணொளிகள்</a>
 </div>
 <?php endif; ?>
 <?php if (!empty($galleries)): ?>
-<div>
+<?php $homeGalleries = array_slice($galleries, 0, 6); ?>
+<div class="media-teaser-col">
 <h3 class="teaser-title">புகைப்பட தொகுப்பு</h3>
-<div class="gallery-grid compact">
-<?php foreach (array_slice($galleries, 0, 3) as $gallery): ?>
-<a href="<?= e(url('/gallery/' . $gallery['slug'])) ?>" class="gallery-card">
-<img src="<?= e(upload_url($gallery['cover_image'] ?? null)) ?>" alt="<?= e($gallery['title']) ?>" loading="lazy">
-<span><?= e($gallery['title']) ?></span>
+<div class="media-carousel" id="galleryCarousel" data-interval="5000">
+<div class="media-carousel-track">
+<?php foreach ($homeGalleries as $i => $gallery): ?>
+<a href="<?= e(url('/gallery/' . $gallery['slug'])) ?>" class="media-carousel-slide<?= $i === 0 ? ' active' : '' ?>" data-slide="<?= (int) $i ?>">
+<span class="media-carousel-media">
+<img src="<?= e(upload_url($gallery['cover_image'] ?? null)) ?>" alt="<?= e($gallery['title']) ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
+</span>
+<span class="media-carousel-title"><?= e($gallery['title']) ?></span>
 </a>
 <?php endforeach; ?>
 </div>
-<a href="<?= e(url('/gallery')) ?>" class="btn btn-outline btn-sm">அனைத்து தொகுப்புகள்</a>
+<?php if (count($homeGalleries) > 1): ?>
+<button type="button" class="media-carousel-nav prev" aria-label="Previous gallery">‹</button>
+<button type="button" class="media-carousel-nav next" aria-label="Next gallery">›</button>
+<div class="media-carousel-dots" role="tablist" aria-label="Gallery slides">
+<?php foreach ($homeGalleries as $i => $gallery): ?>
+<button type="button" class="media-carousel-dot<?= $i === 0 ? ' active' : '' ?>" data-slide="<?= (int) $i ?>" aria-label="<?= e($gallery['title']) ?>"></button>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+</div>
+<a href="<?= e(url('/gallery')) ?>" class="btn btn-outline btn-sm media-teaser-btn">அனைத்து தொகுப்புகள்</a>
 </div>
 <?php endif; ?>
 </div>

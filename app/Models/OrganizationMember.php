@@ -22,6 +22,7 @@ class OrganizationMember extends Model
         'assembly',
         'parliament',
         'district',
+        'address',
         'state',
         'zone',
         'phone',
@@ -68,13 +69,15 @@ class OrganizationMember extends Model
 
         if (!empty($filters['q'])) {
             $like = '%' . $filters['q'] . '%';
-            $where[] = '(m.name LIKE :q1 OR m.tamil_name LIKE :q2 OR m.english_name LIKE :q3 OR m.designation LIKE :q4 OR m.district LIKE :q5 OR m.assembly LIKE :q6)';
+            $where[] = '(m.name LIKE :q1 OR m.tamil_name LIKE :q2 OR m.english_name LIKE :q3 OR m.designation LIKE :q4 OR m.district LIKE :q5 OR m.assembly LIKE :q6 OR m.address LIKE :q7 OR m.phone LIKE :q8)';
             $params['q1'] = $like;
             $params['q2'] = $like;
             $params['q3'] = $like;
             $params['q4'] = $like;
             $params['q5'] = $like;
             $params['q6'] = $like;
+            $params['q7'] = $like;
+            $params['q8'] = $like;
         }
         if (!empty($filters['team_id'])) {
             $where[] = 'm.team_id = :team_id';

@@ -22,6 +22,21 @@ $parentCategories = array_filter($categories ?? [], fn($c) => empty($c['parent_i
             </div>
             <div class="mb-3">
                 <label class="form-label">Content</label>
+                <div class="editor-tools mb-2">
+                    <span class="editor-tools-label">Layout</span>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-editor-cols="2" data-editor-target="content">
+                        <i class="fa-solid fa-columns"></i> 2 Columns
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-editor-cols="3" data-editor-target="content">
+                        <i class="fa-solid fa-table-columns"></i> 3 Columns
+                    </button>
+                    <span class="editor-tools-sep"></span>
+                    <span class="editor-tools-label">Media</span>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-editor-image data-editor-target="content" data-editor-file="#editorImageInput">
+                        <i class="fa-solid fa-image"></i> Upload Image
+                    </button>
+                    <input type="file" id="editorImageInput" accept="image/*" hidden data-editor-image-input data-editor-target="content">
+                </div>
                 <textarea name="content" class="form-control ckeditor" rows="10"><?= old('content', $item['content'] ?? '') ?></textarea>
             </div>
         </div>
@@ -46,8 +61,9 @@ $parentCategories = array_filter($categories ?? [], fn($c) => empty($c['parent_i
                     <input type="url" name="canonical_url" class="form-control" value="<?= $val('canonical_url') ?>">
                 </div>
                 <div class="col-12">
-                    <label class="form-label">OG Image URL</label>
-                    <input type="text" name="og_image" class="form-control" value="<?= $val('og_image') ?>">
+                    <label class="form-label">OG Image URL (optional)</label>
+                    <input type="text" name="og_image" class="form-control" value="<?= $val('og_image') ?>" placeholder="Leave blank to use Featured Image">
+                    <div class="form-text">Share preview uses the Featured Image by default.</div>
                 </div>
             </div>
         </div>
@@ -95,14 +111,17 @@ $parentCategories = array_filter($categories ?? [], fn($c) => empty($c['parent_i
             </div>
             <div class="d-flex flex-wrap gap-3 mb-3">
                 <div class="form-check">
+                    <input type="hidden" name="is_featured" value="0">
                     <input type="checkbox" class="form-check-input" name="is_featured" value="1" id="isFeatured" <?= old('is_featured', $item['is_featured'] ?? 0) ? 'checked' : '' ?>>
                     <label class="form-check-label" for="isFeatured">Featured</label>
                 </div>
                 <div class="form-check">
+                    <input type="hidden" name="is_breaking" value="0">
                     <input type="checkbox" class="form-check-input" name="is_breaking" value="1" id="isBreaking" <?= old('is_breaking', $item['is_breaking'] ?? 0) ? 'checked' : '' ?>>
                     <label class="form-check-label" for="isBreaking">Breaking</label>
                 </div>
                 <div class="form-check">
+                    <input type="hidden" name="is_trending" value="0">
                     <input type="checkbox" class="form-check-input" name="is_trending" value="1" id="isTrending" <?= old('is_trending', $item['is_trending'] ?? 0) ? 'checked' : '' ?>>
                     <label class="form-check-label" for="isTrending">Trending</label>
                 </div>

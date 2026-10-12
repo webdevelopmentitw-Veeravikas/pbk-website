@@ -150,4 +150,34 @@ final class Validator
     {
         return true;
     }
+
+    /** min_age:18 — value must be a date of birth of at least N completed years. */
+    private function ruleMinAge(string $field, mixed $value, ?string $param): bool
+    {
+        if ($value === null || $value === '') {
+            return true;
+        }
+
+        $minAge = max(1, (int) $param);
+        try {
+            $birth = new \DateTimeImmutable((string) $value);
+        } catch (\Throwable) {
+            return $this->fail($field, 'Invalid date of birth.');
+        }
+
+        $today = new \DateTimeImmutable('today');
+        $diff = $birth->diff($today);
+        if ($diff->invert === 1) {
+            return $this->fail($field, 'Date of birth cannot be in the future.');
+        }
+
+        if ((int) $diff->y < $minAge) {
+            return $this->fail(
+                $field,
+                "Membership is allowed only for {$minAge} years and above. (வயது {$minAge}க்கு மேல் இருக்க வேண்டும்)"
+            );
+        }
+
+        return true;
+    }
 }

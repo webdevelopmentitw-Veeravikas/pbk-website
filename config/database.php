@@ -9,7 +9,7 @@ return [
     'driver'    => 'mysql',
     'host'      => '127.0.0.1',
     'port'      => 3306,
-    'database'  => 'cms_portal',
+    'database'  => 'pbk',
     'username'  => 'root',
     'password'  => '',
     'charset'   => 'utf8mb4',

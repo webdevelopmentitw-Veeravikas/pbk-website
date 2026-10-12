@@ -6,7 +6,14 @@ $title = $seo['title'] ?? ($siteName);
 $description = $seo['description'] ?? setting('meta_description', $settings['site_tagline'] ?? '');
 $keywords = $seo['keywords'] ?? setting('meta_keywords', '');
 $canonical = $seo['canonical'] ?? (url(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/'));
-$ogImage = $seo['og_image'] ?? upload_url($settings['logo'] ?? '');
+$ogImage = trim((string) ($seo['og_image'] ?? ''));
+if ($ogImage === '') {
+    $ogImage = upload_url($settings['logo'] ?? '');
+}
+// Social crawlers require an absolute URL.
+if ($ogImage !== '' && !preg_match('#^https?://#i', $ogImage)) {
+    $ogImage = url(ltrim($ogImage, '/'));
+}
 $ogType = $seo['og_type'] ?? 'website';
 $fullTitle = ($seo['title'] ?? '') !== '' && ($seo['title'] ?? '') !== $siteName
     ? e($title) . ' | ' . e($siteName)
@@ -31,6 +38,8 @@ $fullTitle = ($seo['title'] ?? '') !== '' && ($seo['title'] ?? '') !== $siteName
 <meta property="og:url" content="<?= e($canonical) ?>">
 <?php if ($ogImage): ?>
 <meta property="og:image" content="<?= e($ogImage) ?>">
+<meta property="og:image:secure_url" content="<?= e($ogImage) ?>">
+<meta property="og:image:alt" content="<?= e($title) ?>">
 <?php endif; ?>
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="<?= e($title) ?>">

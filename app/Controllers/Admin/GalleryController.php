@@ -45,7 +45,7 @@ class GalleryController extends BaseAdminController
             'slug'        => $slug,
             'description' => $this->request->post('description'),
             'cover_image' => $coverImage,
-            'status'      => $this->boolVal($this->request->post('status', 1)),
+            'status'      => $this->checkboxVal('status'),
         ]);
 
         $this->storeGalleryImages($id, $upload);
@@ -84,7 +84,7 @@ class GalleryController extends BaseAdminController
             'title'       => $data['title'],
             'slug'        => $slug,
             'description' => $this->request->post('description'),
-            'status'      => $this->boolVal($this->request->post('status', 1)),
+            'status'      => $this->checkboxVal('status'),
         ];
 
         if ($file = $this->request->file('cover_image')) {

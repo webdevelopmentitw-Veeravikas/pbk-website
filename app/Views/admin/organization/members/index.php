@@ -57,7 +57,7 @@ $filters = $filters ?? [];
             <div class="col-md-8">
                 <label class="form-label">Bulk Import (CSV)</label>
                 <input type="file" name="csv_file" class="form-control" accept=".csv,text/csv" required>
-                <div class="form-text">Columns: team, name, tamil_name, english_name, designation, position, assembly, parliament, district, state, zone, phone, email, featured, status, joining_date</div>
+                <div class="form-text">Columns: team, name, tamil_name, english_name, designation, position, assembly, parliament, district, address, state, zone, phone, email, featured, status, joining_date</div>
             </div>
             <div class="col-md-4">
                 <button type="submit" class="btn btn-outline-primary w-100"><i class="fa-solid fa-file-import me-1"></i>Import</button>
@@ -104,11 +104,21 @@ $filters = $filters ?? [];
                         <tr data-delete-row data-id="<?= (int) $m['id'] ?>">
                             <td><input type="checkbox" class="form-check-input member-check" value="<?= (int) $m['id'] ?>"></td>
                             <td>
-                                <?php if (!empty($m['photo'])): ?>
-                                    <img src="<?= upload_url($m['photo']) ?>" alt="" class="rounded" width="40" height="40" style="object-fit:cover;">
-                                <?php else: ?>
-                                    <span class="rounded bg-secondary text-white d-inline-flex align-items-center justify-content-center" style="width:40px;height:40px;"><i class="fa-solid fa-user"></i></span>
-                                <?php endif; ?>
+                                <div class="d-flex align-items-center gap-2">
+                                    <?php if (!empty($m['photo'])): ?>
+                                        <img src="<?= upload_url($m['photo']) ?>" alt="" class="rounded" width="40" height="40" style="object-fit:cover;">
+                                    <?php else: ?>
+                                        <span class="rounded bg-secondary text-white d-inline-flex align-items-center justify-content-center" style="width:40px;height:40px;"><i class="fa-solid fa-user"></i></span>
+                                    <?php endif; ?>
+                                    <form action="<?= url('/admin/organization/members/' . (int) $m['id'] . '/photo') ?>" method="POST" enctype="multipart/form-data" class="mb-0">
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="return_to" value="<?= e('/admin/organization/members' . (!empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '')) ?>">
+                                        <label class="btn btn-sm btn-outline-secondary mb-0" title="Upload photo">
+                                            <i class="fa-solid fa-camera"></i>
+                                            <input type="file" name="photo" accept="image/jpeg,image/png,image/webp,image/gif" hidden onchange="this.form.submit()">
+                                        </label>
+                                    </form>
+                                </div>
                             </td>
                             <td>
                                 <strong><?= e($m['tamil_name'] ?: $m['name']) ?></strong>

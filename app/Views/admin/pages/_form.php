@@ -16,7 +16,23 @@ $val = fn($key, $default = '') => e(old($key, $item[$key] ?? $default));
             </div>
             <div class="mb-3">
                 <label class="form-label">Content</label>
+                <div class="editor-tools mb-2">
+                    <span class="editor-tools-label">Layout</span>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-editor-cols="2" data-editor-target="content" title="Insert 2 columns">
+                        <i class="fa-solid fa-columns"></i> 2 Columns
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-editor-cols="3" data-editor-target="content" title="Insert 3 columns">
+                        <i class="fa-solid fa-table-columns"></i> 3 Columns
+                    </button>
+                    <span class="editor-tools-sep"></span>
+                    <span class="editor-tools-label">Media</span>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-editor-image data-editor-target="content" data-editor-file="#editorImageInput" title="Upload & insert image">
+                        <i class="fa-solid fa-image"></i> Upload Image
+                    </button>
+                    <input type="file" id="editorImageInput" accept="image/*" hidden data-editor-image-input data-editor-target="content">
+                </div>
                 <textarea name="content" class="form-control ckeditor" rows="12"><?= old('content', $item['content'] ?? '') ?></textarea>
+                <div class="form-text">Use <strong>2 Columns / 3 Columns</strong> to split content. Use <strong>Upload Image</strong> or the editor image button to insert photos.</div>
             </div>
         </div>
         <div class="form-section">
@@ -34,7 +50,7 @@ $val = fn($key, $default = '') => e(old($key, $item[$key] ?? $default));
             <div class="mb-3">
                 <label class="form-label">Template</label>
                 <select name="template" class="form-select">
-                    <?php foreach (['default', 'full-width', 'sidebar', 'contact'] as $tpl): ?>
+                    <?php foreach (['default', 'about', 'full-width', 'sidebar', 'contact'] as $tpl): ?>
                     <option value="<?= $tpl ?>" <?= old('template', $item['template'] ?? 'default') === $tpl ? 'selected' : '' ?>><?= ucfirst(str_replace('-', ' ', $tpl)) ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -44,8 +60,15 @@ $val = fn($key, $default = '') => e(old($key, $item[$key] ?? $default));
                 <input type="number" name="sort_order" class="form-control" value="<?= $val('sort_order', '0') ?>">
             </div>
             <div class="mb-3 form-check form-switch">
+                <input type="hidden" name="status" value="0">
                 <input type="checkbox" class="form-check-input" name="status" value="1" id="pageStatus" <?= old('status', $item['status'] ?? 1) ? 'checked' : '' ?>>
                 <label class="form-check-label" for="pageStatus">Active</label>
+            </div>
+            <div class="mb-3 form-check form-switch">
+                <input type="hidden" name="show_in_menu" value="0">
+                <input type="checkbox" class="form-check-input" name="show_in_menu" value="1" id="pageShowInMenu" <?= old('show_in_menu', $item['show_in_menu'] ?? 0) ? 'checked' : '' ?>>
+                <label class="form-check-label" for="pageShowInMenu">Show in header menu</label>
+                <div class="form-text">Only selected pages appear in the website header menu.</div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Banner Image</label>

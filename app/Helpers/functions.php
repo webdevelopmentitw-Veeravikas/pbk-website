@@ -51,6 +51,14 @@ if (!function_exists('url')) {
     function url(string $path = ''): string
     {
         $base = rtrim((string) config('app.url', ''), '/');
+        // Guard: production must not keep a leftover "/p" prefix in generated links.
+        $host = strtolower((string) ($_SERVER['HTTP_HOST'] ?? ''));
+        $isLocal = $host === '' || str_contains($host, 'localhost') || str_starts_with($host, '127.0.0.1');
+        if (!$isLocal && str_ends_with($base, '/p')) {
+            $base = substr($base, 0, -2);
+            $base = rtrim($base, '/');
+        }
+
         $path = '/' . ltrim($path, '/');
         if ($path === '/') {
             return $base . '/';
@@ -87,9 +95,15 @@ if (!function_exists('e')) {
 if (!function_exists('old')) {
     function old(string $key, mixed $default = ''): mixed
     {
-        $old = Session::flash('old') ?? Session::get('_old_input');
-        if (is_array($old) && array_key_exists($key, $old)) {
-            return $old[$key];
+        static $bag = false;
+        if ($bag === false) {
+            $bag = $_SESSION['_flash']['old'] ?? Session::get('_old_input') ?? [];
+            if (isset($_SESSION['_flash']['old'])) {
+                unset($_SESSION['_flash']['old']);
+            }
+        }
+        if (is_array($bag) && array_key_exists($key, $bag)) {
+            return $bag[$key];
         }
         return $default;
     }

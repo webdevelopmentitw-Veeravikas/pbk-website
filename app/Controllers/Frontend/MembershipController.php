@@ -31,7 +31,7 @@ class MembershipController extends BaseFrontendController
             'name'         => 'required|max:150',
             'father_name'  => 'required|max:150',
             'gender'       => 'required|in:ஆண்,பெண்,மற்றவை',
-            'dob'          => 'required',
+            'dob'          => 'required|min_age:18',
             'country'      => 'required|max:100',
             'phone'        => 'required|max:30',
             'email'        => 'required|email|max:190',
@@ -134,12 +134,20 @@ class MembershipController extends BaseFrontendController
         $generator = new MembershipCardGenerator();
         $cards = $generator->generate($member);
 
+        $photoUrl = '';
+        if (!empty($member['photo'])) {
+            $photoUrl = upload_url((string) $member['photo']);
+        }
+
         echo \App\Core\View::render('frontend.membership.card', [
             'member' => $member,
             'siteName' => setting('site_name', 'CMS'),
             'verifyUrl' => url('/membership/card/' . $member['membership_id']),
             'age' => $model->age($member['dob'] ?? null),
             'joined' => $joined,
+            'photoUrl' => $photoUrl,
+            'templateFront' => asset('assets/images/membership/card-front.png'),
+            'templateBack' => asset('assets/images/membership/card-back.png'),
             'frontUrl' => upload_url($cards['front_url']),
             'backUrl' => upload_url($cards['back_url']),
             'cardFiles' => $cards,

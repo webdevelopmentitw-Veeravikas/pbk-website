@@ -13,6 +13,7 @@
                         <th>Title</th>
                         <th>Slug</th>
                         <th>Template</th>
+                        <th>Header menu</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -24,6 +25,13 @@
                         <td><?= e($page['title']) ?></td>
                         <td><code class="small"><?= e($page['slug']) ?></code></td>
                         <td><?= e($page['template'] ?? 'default') ?></td>
+                        <td>
+                            <?php if ((int) ($page['show_in_menu'] ?? 0) === 1): ?>
+                                <span class="badge bg-primary">Selected</span>
+                            <?php else: ?>
+                                <span class="badge bg-light text-dark">No</span>
+                            <?php endif; ?>
+                        </td>
                         <td><span class="badge bg-<?= (int) ($page['status'] ?? 0) ? 'success' : 'secondary' ?> badge-status"><?= (int) ($page['status'] ?? 0) ? 'Active' : 'Inactive' ?></span></td>
                         <td>
                             <a href="<?= url('/admin/pages/' . $page['id'] . '/edit') ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>

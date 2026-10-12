@@ -8,11 +8,14 @@ use App\Core\Auth;
 use App\Core\Upload;
 use App\Models\ActivityLog;
 use App\Models\Page;
+use App\Services\PageMenuSync;
 
 class PageController extends BaseAdminController
 {
     public function index(): void
     {
+        (new PageMenuSync())->syncAll();
+
         $this->view('admin.pages.index', [
             'pages' => (new Page())->all('sort_order ASC, id DESC'),
         ], 'admin.layouts.app');
@@ -39,7 +42,7 @@ class PageController extends BaseAdminController
             $banner = $stored['path'] ?? null;
         }
 
-        $id = $model->create([
+        $payload = [
             'title'             => $data['title'],
             'slug'              => $slug,
             'content'           => $this->request->post('content'),
@@ -50,8 +53,12 @@ class PageController extends BaseAdminController
             'seo_keywords'      => $this->request->post('seo_keywords'),
             'canonical_url'     => $this->request->post('canonical_url'),
             'sort_order'        => (int) ($this->request->post('sort_order') ?? 0),
-            'status'            => $this->boolVal($this->request->post('status', 1)),
-        ]);
+            'status'            => $this->checkboxVal('status'),
+            'show_in_menu'      => $this->checkboxVal('show_in_menu'),
+        ];
+
+        $id = $model->create($payload);
+        (new PageMenuSync())->syncPage(array_merge($payload, ['id' => $id]));
 
         ActivityLog::record(Auth::id(), 'page_create', "Created page #{$id}: {$data['title']}");
         $this->flash('success', 'Page created.');
@@ -82,6 +89,7 @@ class PageController extends BaseAdminController
 
         $slug = $this->uniqueSlug($model, slugify($this->request->post('slug') ?: $data['title']), $id);
         $upload = new Upload();
+        $previousSlug = (string) ($page['slug'] ?? '');
 
         $update = [
             'title'             => $data['title'],
@@ -93,7 +101,8 @@ class PageController extends BaseAdminController
             'seo_keywords'      => $this->request->post('seo_keywords'),
             'canonical_url'     => $this->request->post('canonical_url'),
             'sort_order'        => (int) ($this->request->post('sort_order') ?? 0),
-            'status'            => $this->boolVal($this->request->post('status', 1)),
+            'status'            => $this->checkboxVal('status'),
+            'show_in_menu'      => $this->checkboxVal('show_in_menu'),
         ];
 
         if ($file = $this->request->file('banner')) {
@@ -105,6 +114,8 @@ class PageController extends BaseAdminController
         }
 
         $model->update($id, $update);
+        (new PageMenuSync())->syncPage(array_merge($page, $update, ['id' => $id]), $previousSlug);
+
         ActivityLog::record(Auth::id(), 'page_update', "Updated page #{$id}");
         $this->flash('success', 'Page updated.');
         $this->redirect(url('/admin/pages/' . $id . '/edit'));
@@ -118,6 +129,7 @@ class PageController extends BaseAdminController
             $this->notFound();
         }
 
+        (new PageMenuSync())->removeBySlug((string) ($page['slug'] ?? ''));
         (new Upload())->delete($page['banner'] ?? null);
         $model->delete($id);
 

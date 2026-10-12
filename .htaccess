@@ -1,13 +1,11 @@
 RewriteEngine On
-
-# Local XAMPP: /p/
-# Live root domain (pbkofficial.in): change this line to  RewriteBase /
-RewriteBase /p/
+# Local XAMPP folder is htdocs/p. Omit RewriteBase so Apache uses this directory
+# (works at /p locally and at the domain root on the live site).
 
 # Protect sensitive directories
 RewriteRule ^(app|config|database|storage|vendor)/ - [F,L]
 
-# Serve existing files/dirs as-is (public assets)
+# Serve existing files/directories as-is
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]

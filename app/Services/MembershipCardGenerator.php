@@ -111,8 +111,13 @@ final class MembershipCardGenerator
             $this->pastePhoto($img, $photoPath, self::BACK_PHOTO, true);
         }
 
-        $fontTamil = $this->fontPath(['NotoSansTamil-Bold.ttf', 'NotoSansTamil-Regular.ttf']);
-        $fontLatin = $this->fontPath(['NotoSans-Bold.ttf'], true);
+        $fontTamil = $this->fontPath([
+            'MuktaMalar-Bold.ttf',
+            'MuktaMalar-SemiBold.ttf',
+            'NotoSansTamil-Bold.ttf',
+            'NotoSansTamil-Regular.ttf',
+        ], false, true);
+        $fontLatin = $this->fontPath(['NotoSans-Bold.ttf', 'MuktaMalar-Bold.ttf'], true);
 
         $w = imagesx($img);
         $h = imagesy($img);
@@ -306,17 +311,97 @@ final class MembershipCardGenerator
                 continue;
             }
             $font = $isTamil ? $fontTamil : $fontLatin;
-            $box = @imagettfbbox($size, 0, $font, $chunk);
-            imagettftext($img, $size, 0, $cursorX, $y, $color, $font, $chunk);
+            $draw = $isTamil ? $this->shapeTamilForGd($chunk) : $chunk;
+            $box = @imagettfbbox($size, 0, $font, $draw);
+            imagettftext($img, $size, 0, $cursorX, $y, $color, $font, $draw);
             if (is_array($box)) {
                 $cursorX += (int) ceil($box[2] - $box[0]);
             } else {
-                $cursorX += (int) ceil(strlen($chunk) * $size * 0.55);
+                $cursorX += (int) ceil(strlen($draw) * $size * 0.55);
             }
             if ($i < $last) {
                 $cursorX += (int) max(1, round($size * 0.06));
             }
         }
+    }
+
+    /**
+     * Reorder Tamil syllables so GD/FreeType draws ெ ே ை on the left of
+     * the final consonant (GD does not run OpenType Indic shaping).
+     */
+    private function shapeTamilForGd(string $text): string
+    {
+        $chars = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY);
+        if ($chars === false || $chars === []) {
+            return $text;
+        }
+
+        $out = '';
+        $n = count($chars);
+        $i = 0;
+        while ($i < $n) {
+            $cp = mb_ord($chars[$i], 'UTF-8');
+            if ($cp === false || !$this->isTamilConsonant($cp)) {
+                $out .= $chars[$i];
+                $i++;
+                continue;
+            }
+
+            $consonants = [$chars[$i]];
+            $i++;
+            while ($i + 1 < $n) {
+                $virama = mb_ord($chars[$i], 'UTF-8');
+                $next = mb_ord($chars[$i + 1], 'UTF-8');
+                if ($virama === 0x0BCD && $next !== false && $this->isTamilConsonant($next)) {
+                    $consonants[] = $chars[$i + 1];
+                    $i += 2;
+                    continue;
+                }
+                break;
+            }
+
+            $dead = false;
+            if ($i < $n && mb_ord($chars[$i], 'UTF-8') === 0x0BCD) {
+                $dead = true;
+                $i++;
+            }
+
+            $matra = '';
+            $mcp = 0;
+            if (!$dead && $i < $n) {
+                $mcp = mb_ord($chars[$i], 'UTF-8') ?: 0;
+                if ($mcp >= 0x0BBE && $mcp <= 0x0BCC) {
+                    $matra = $chars[$i];
+                    $i++;
+                } else {
+                    $mcp = 0;
+                }
+            }
+
+            $last = array_pop($consonants);
+            $prefix = '';
+            foreach ($consonants as $cons) {
+                $prefix .= $cons . '்';
+            }
+
+            if ($dead) {
+                $out .= $prefix . $last . '்';
+            } elseif ($mcp === 0x0BCA) {
+                $out .= $prefix . 'ெ' . $last . 'ா';
+            } elseif ($mcp === 0x0BCB) {
+                $out .= $prefix . 'ே' . $last . 'ா';
+            } elseif ($mcp === 0x0BCC) {
+                $out .= $prefix . 'ெ' . $last . 'ௗ';
+            } elseif ($mcp === 0x0BC6 || $mcp === 0x0BC7 || $mcp === 0x0BC8) {
+                $out .= $prefix . $matra . $last;
+            } elseif ($matra !== '') {
+                $out .= $prefix . $last . $matra;
+            } else {
+                $out .= $prefix . $last;
+            }
+        }
+
+        return $out;
     }
 
     /**
@@ -336,7 +421,11 @@ final class MembershipCardGenerator
         $currentTamil = null;
 
         foreach ($chars as $ch) {
-            // Keep spaces/punctuation with the previous run so alignment stays natural.
+            $cp = mb_ord($ch, 'UTF-8');
+            if ($currentTamil !== null && ($cp === 0x200C || $cp === 0x200D)) {
+                $buffer .= $ch;
+                continue;
+            }
             if ($currentTamil !== null && preg_match('/^[\s\.\,\-\/\&\(\)]$/u', $ch) === 1) {
                 $buffer .= $ch;
                 continue;
@@ -375,8 +464,22 @@ final class MembershipCardGenerator
         if ($cp === false) {
             return false;
         }
-        // Tamil block + Tamil Supplement.
-        return ($cp >= 0x0B80 && $cp <= 0x0BFF) || ($cp >= 0x11FC0 && $cp <= 0x11FFF);
+        // Tamil block, Tamil Supplement, ZWJ/ZWNJ.
+        return ($cp >= 0x0B80 && $cp <= 0x0BFF)
+            || ($cp >= 0x11FC0 && $cp <= 0x11FFF)
+            || $cp === 0x200C
+            || $cp === 0x200D;
+    }
+
+    private function isTamilConsonant(int $cp): bool
+    {
+        static $consonants = [
+            0x0B95, 0x0B99, 0x0B9A, 0x0B9C, 0x0B9E, 0x0B9F,
+            0x0BA3, 0x0BA4, 0x0BA8, 0x0BA9, 0x0BAA, 0x0BAE,
+            0x0BAF, 0x0BB0, 0x0BB1, 0x0BB2, 0x0BB3, 0x0BB4,
+            0x0BB5, 0x0BB6, 0x0BB7, 0x0BB8, 0x0BB9,
+        ];
+        return in_array($cp, $consonants, true);
     }
 
     private function normalizeUtf8(string $text): string
@@ -392,13 +495,30 @@ final class MembershipCardGenerator
         return preg_replace('/\s+/u', ' ', $text) ?? $text;
     }
 
-    /** @param list<string> $names */
-    private function fontPath(array $names, bool $allowSystemLatin = false): string
+    /**
+     * @param list<string> $names
+     */
+    private function fontPath(array $names, bool $allowSystemLatin = false, bool $allowSystemTamil = false): string
     {
         foreach ($names as $name) {
             $path = $this->fontDir . '/' . $name;
             if (is_file($path)) {
                 return $path;
+            }
+        }
+
+        if ($allowSystemTamil) {
+            foreach ([
+                'C:\\Windows\\Fonts\\NirmalaB.ttf',
+                'C:\\Windows\\Fonts\\nirmalab.ttf',
+                'C:\\Windows\\Fonts\\Nirmala.ttf',
+                'C:\\Windows\\Fonts\\nirmala.ttf',
+                'C:\\Windows\\Fonts\\lathab.ttf',
+                'C:\\Windows\\Fonts\\latha.ttf',
+            ] as $path) {
+                if (is_file($path)) {
+                    return $path;
+                }
             }
         }
 

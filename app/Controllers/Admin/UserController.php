@@ -51,7 +51,7 @@ class UserController extends BaseAdminController
             'avatar'   => $avatar,
             'phone'    => $this->request->post('phone'),
             'bio'      => $this->request->post('bio'),
-            'status'   => $this->boolVal($this->request->post('status', 1)),
+            'status'   => $this->checkboxVal('status'),
         ]);
 
         ActivityLog::record(Auth::id(), 'user_create', "Created user #{$id}: {$data['email']}");
@@ -99,7 +99,7 @@ class UserController extends BaseAdminController
             'email'   => $data['email'],
             'phone'   => $this->request->post('phone'),
             'bio'     => $this->request->post('bio'),
-            'status'  => $this->boolVal($this->request->post('status', 1)),
+            'status'  => $this->checkboxVal('status'),
         ];
 
         if (!empty($data['password'])) {

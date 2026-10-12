@@ -17,16 +17,20 @@ $breadcrumbs = [
 <section>
 <div class="wrap">
 <?php if (!empty($galleries)): ?>
-<div class="gallery-grid">
+<div class="gallery-albums-grid">
 <?php foreach ($galleries as $gallery): ?>
-<a href="<?= e(url('/gallery/' . $gallery['slug'])) ?>" class="gallery-card">
+<a href="<?= e(url('/gallery/' . $gallery['slug'])) ?>" class="gallery-album-card">
+<span class="gallery-album-cover">
 <img src="<?= e(upload_url($gallery['cover_image'] ?? null)) ?>" alt="<?= e($gallery['title']) ?>" loading="lazy">
-<div class="gallery-card-overlay">
+</span>
+<span class="gallery-album-body">
 <h3><?= e($gallery['title']) ?></h3>
 <?php if (!empty($gallery['description'])): ?>
-<p><?= e(str_limit($gallery['description'], 80)) ?></p>
+<p><?= e(str_limit($gallery['description'], 90)) ?></p>
+<?php else: ?>
+<p>தொகுப்பை பார்க்க கிளிக் செய்யவும்</p>
 <?php endif; ?>
-</div>
+</span>
 </a>
 <?php endforeach; ?>
 </div>

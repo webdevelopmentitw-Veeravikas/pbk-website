@@ -74,6 +74,7 @@ $queryBase = url('/organization/search') . '?' . http_build_query(array_filter([
         <ul class="org-meta">
             <?php if (!empty($m['assembly'])): ?><li><span>தொகுதி</span> <?= e($m['assembly']) ?></li><?php endif; ?>
             <?php if (!empty($m['district'])): ?><li><span>மாவட்டம்</span> <?= e($m['district']) ?></li><?php endif; ?>
+            <?php if (!empty($m['phone'])): ?><li><span>தொலைபேசி</span> <?= e($m['phone']) ?></li><?php endif; ?>
         </ul>
         <a href="<?= e(url('/organization/member/' . $m['id'])) ?>" class="org-view-btn">சுயவிவரம் பார்க்க</a>
     </div>

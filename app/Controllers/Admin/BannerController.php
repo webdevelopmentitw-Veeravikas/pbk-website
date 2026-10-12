@@ -80,7 +80,7 @@ class BannerController extends BaseAdminController
             'type'         => $data['type'],
             'category_id'  => $this->request->post('category_id') ?: null,
             'sort_order'   => (int) ($this->request->post('sort_order') ?? 0),
-            'status'       => $this->boolVal($this->request->post('status', 1)),
+            'status'       => $this->checkboxVal('status'),
             'starts_at'    => $this->request->post('starts_at') ?: null,
             'ends_at'      => $this->request->post('ends_at') ?: null,
         ]);
@@ -127,7 +127,7 @@ class BannerController extends BaseAdminController
             'type'         => $data['type'],
             'category_id'  => $this->request->post('category_id') ?: null,
             'sort_order'   => (int) ($this->request->post('sort_order') ?? 0),
-            'status'       => $this->boolVal($this->request->post('status', 1)),
+            'status'       => $this->checkboxVal('status'),
             'starts_at'    => $this->request->post('starts_at') ?: null,
             'ends_at'      => $this->request->post('ends_at') ?: null,
         ];

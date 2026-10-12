@@ -22,6 +22,7 @@ $val = fn($key, $default = '') => e(old($key, $item[$key] ?? $default));
         </div>
         <div class="col-md-4 d-flex align-items-end">
             <div class="form-check form-switch">
+                <input type="hidden" name="status" value="0">
                 <input type="checkbox" class="form-check-input" name="status" value="1" id="eventStatus" <?= old('status', $item['status'] ?? 1) ? 'checked' : '' ?>>
                 <label class="form-check-label" for="eventStatus">Active</label>
             </div>
@@ -36,6 +37,21 @@ $val = fn($key, $default = '') => e(old($key, $item[$key] ?? $default));
         </div>
         <div class="col-12">
             <label class="form-label">Description</label>
+            <div class="editor-tools mb-2">
+                <span class="editor-tools-label">Layout</span>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-editor-cols="2" data-editor-target="description">
+                    <i class="fa-solid fa-columns"></i> 2 Columns
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-editor-cols="3" data-editor-target="description">
+                    <i class="fa-solid fa-table-columns"></i> 3 Columns
+                </button>
+                <span class="editor-tools-sep"></span>
+                <span class="editor-tools-label">Media</span>
+                <button type="button" class="btn btn-sm btn-outline-primary" data-editor-image data-editor-target="description" data-editor-file="#editorImageInputDesc">
+                    <i class="fa-solid fa-image"></i> Upload Image
+                </button>
+                <input type="file" id="editorImageInputDesc" accept="image/*" hidden data-editor-image-input data-editor-target="description">
+            </div>
             <textarea name="description" class="form-control ckeditor" rows="6"><?= old('description', $item['description'] ?? '') ?></textarea>
         </div>
         <div class="col-12">

@@ -18,17 +18,21 @@ $breadcrumbs = [
 <div class="wrap">
 <?php $items = $videos['data'] ?? []; ?>
 <?php if (!empty($items)): ?>
-<div class="video-grid">
+<div class="video-albums-grid">
 <?php foreach ($items as $video): ?>
-<a href="<?= e(url('/videos/' . $video['slug'])) ?>" class="video-card">
-<div class="video-thumb">
+<a href="<?= e(url('/videos/' . $video['slug'])) ?>" class="video-album-card">
+<span class="video-album-cover">
 <img src="<?= e(upload_url($video['thumbnail'] ?? null)) ?>" alt="<?= e($video['title']) ?>" loading="lazy">
-<span class="play-icon">▶</span>
-</div>
+<span class="play-icon" aria-hidden="true">▶</span>
+</span>
+<span class="video-album-body">
 <h3><?= e($video['title']) ?></h3>
 <?php if (!empty($video['description'])): ?>
-<p><?= e(str_limit($video['description'], 100)) ?></p>
+<p><?= e(str_limit($video['description'], 90)) ?></p>
+<?php else: ?>
+<p>காணொளியை பார்க்க கிளிக் செய்யவும்</p>
 <?php endif; ?>
+</span>
 </a>
 <?php endforeach; ?>
 </div>
